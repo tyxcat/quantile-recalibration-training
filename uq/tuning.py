@@ -27,7 +27,9 @@ def get_tuning_for_QRT(config):
             HP(posthoc_grid=posthoc_grid),
         )
 
-    bs = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1]
+    # bs = [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1]
+    bs = [0.1]
+
     inhoc_grid_list = [
         Join(HP(method='smooth_ecdf'), HP(alpha=alpha), HP(b=b))
         for alpha in [1]
@@ -47,7 +49,9 @@ def get_tuning_for_QRT(config):
         for b in [0.01, 0.05, 0.1, 0.2]
     ]
 
-    posthoc_grid = HP(method=[None, 'smooth_ecdf'])
+    # posthoc_grid = HP(method=[None, 'smooth_ecdf'])
+    posthoc_grid = HP(method=['smooth_ecdf'])
+
 
     inhoc_grid_smoothing = [
         Join(HP(method='smooth_ecdf'), HP(alpha=1), HP(b=b), HP(reflected=False), HP(truncated=truncated))
@@ -58,24 +62,24 @@ def get_tuning_for_QRT(config):
     posthoc_grid_smoothing = Join(HP(method='smooth_ecdf'), HP(reflected=False), HP(truncated=[False, True]))
 
     return Union(
-        ## Base
+        # Base
         # Note: when posthoc_dataset='train', calibration data is used for training the base model
         default_tuning(mlp, posthoc_dataset=['calib', 'train'], base_loss='nll', posthoc_grid=posthoc_grid),
-        ## QRT
+        # QRT
         default_tuning(mlp, HP(inhoc_dataset=['batch']), base_loss='nll_inhoc_mc', inhoc_grid=inhoc_grid_list, posthoc_grid=posthoc_grid),
-        ## QRT with different alphas
+        # QRT with different alphas
         default_tuning(mlp, HP(inhoc_dataset=['batch']), base_loss='nll_inhoc_mc', inhoc_grid=inhoc_grid_list_alpha, posthoc_grid=posthoc_grid),
-        ## QRT with sampling in training dataset and different calibration sizes
+        # QRT with sampling in training dataset and different calibration sizes
         default_tuning(mlp, HP(inhoc_dataset=['train']), base_loss='nll_inhoc_mc', inhoc_grid=inhoc_grid_list_cal_size, posthoc_grid=posthoc_grid),
-        ## Base with other mixture sizes
+        # Base with other mixture sizes
         default_tuning(mlp, mixture_size=[1, 10], posthoc_dataset=['calib', 'train'], base_loss='nll', posthoc_grid=posthoc_grid),
-        ## QRT with other mixture sizes
+        # QRT with other mixture sizes
         default_tuning(mlp, HP(inhoc_dataset=['batch', 'calib']), mixture_size=[1, 10], base_loss='nll_inhoc_mc', inhoc_grid=inhoc_grid_list, posthoc_grid=posthoc_grid),
-        ## Standard vs reflected vs truncated
+        # Standard vs reflected vs truncated
         default_tuning(mlp, HP(inhoc_dataset=['batch']), base_loss='nll_inhoc_mc', inhoc_grid=inhoc_grid_smoothing, posthoc_grid=posthoc_grid),
         default_tuning(mlp, HP(cal_size=[2048]), HP(inhoc_dataset=['batch']), base_loss='nll_inhoc_mc', inhoc_grid=HP(method='smooth_ecdf'), posthoc_grid=posthoc_grid_smoothing),
         default_tuning(mlp, HP(cal_size=[2048]), base_loss='nll', posthoc_dataset='calib', posthoc_grid=posthoc_grid_smoothing),
-        ## Ablation study
+        # Ablation study
         default_tuning(
             mlp,
             HP(inhoc_variant=['only_init', 'no_grad', 'learned']),
@@ -84,9 +88,9 @@ def get_tuning_for_QRT(config):
             inhoc_grid=inhoc_grid_list,
             posthoc_grid=posthoc_grid,
         ),
-        ## Base with ResNet
+        # Base with ResNet
         default_tuning(resnet, posthoc_dataset=['calib', 'train'], base_loss='nll', posthoc_grid=posthoc_grid),
-        ## QRT with ResNet
+        # QRT with ResNet
         default_tuning(resnet, HP(cal_size=[2048]), HP(inhoc_dataset=['batch']), base_loss='nll_inhoc_mc', inhoc_grid=inhoc_grid_list, posthoc_grid=posthoc_grid),
     )
 

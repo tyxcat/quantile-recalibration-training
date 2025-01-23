@@ -214,8 +214,8 @@ def run_all(config: DictConfig, manager='sequential'):
     # Note that they will be downloaded again during training if a specific dataset is not found
     if not Path('data').exists():
         data_path = Path(config.data_dir)
-        for suite_id in [269, 297, 299]:
-            download_openml_suite(suite_id, data_path)
+        # for suite_id in [269, 297, 299]:
+            # download_openml_suite(suite_id, data_path)
         download_all_uci(data_path)
 
     runner = Runner(config, manager=manager)

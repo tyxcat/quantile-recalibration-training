@@ -74,7 +74,7 @@ def crps_normal_mixture(dist, y):
 
 def length_and_coverage_from_quantiles(y, quantiles, alpha, left_alpha, right_alpha):
     left_alpha_index = (alpha == left_alpha).nonzero().item()
-    right_alpha_index = (alpha == right_alpha).nonzero().item()
+    right_alpha_index = (torch.isclose(alpha, torch.tensor(right_alpha))).nonzero().item()
     left_bound = quantiles[..., left_alpha_index]
     right_bound = quantiles[..., right_alpha_index]
     length = torch.maximum(right_bound - left_bound, torch.tensor(0))

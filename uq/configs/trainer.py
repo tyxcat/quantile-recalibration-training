@@ -39,7 +39,7 @@ def lightning_trainer_config(config):
             accelerator='cpu',
             devices=1,
             min_epochs=1,
-            max_epochs=5000,
+            max_epochs=500,
             # number of validation steps to execute at the beginning of the training
             num_sanity_val_steps=0,
             log_every_n_steps=1,

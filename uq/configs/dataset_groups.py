@@ -19,18 +19,18 @@ def default_args(config):
 
 def uci_config(config):
     names = [
-        'CPU',
-        'Yacht',
-        'MPG',
-        'Energy',
-        'Crime',
-        'Fish',
-        'Concrete',
-        'Airfoil',
-        'Kin8nm',
-        'Power',
-        'Naval',
-        'Protein',
+        'Boston',
+        # 'Yacht',
+        # 'MPG',
+        # 'Energy',
+        # 'Crime',
+        # 'Fish',
+        # 'Concrete',
+        # 'Airfoil',
+        # 'Kin8nm',
+        # 'Power',
+        # 'Naval',
+        # 'Protein',
     ]
     datamodule_config = dict(
         cls=UCIDataModule,

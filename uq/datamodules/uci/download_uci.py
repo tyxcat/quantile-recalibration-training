@@ -15,22 +15,22 @@ from ..preprocessing import (
 )
 
 urls = {
-    'Airfoil': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00291/airfoil_self_noise.dat',
+    # 'Airfoil': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00291/airfoil_self_noise.dat',
     'Boston': 'https://archive.ics.uci.edu/ml/machine-learning-databases/housing/housing.data',
-    'Concrete': 'http://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls',
-    'CPU': 'https://archive.ics.uci.edu/ml/machine-learning-databases/cpu-performance/machine.data',
-    'Crime': 'https://archive.ics.uci.edu/ml/machine-learning-databases/communities/communities.data',
-    'Energy': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00242/ENB2012_data.xlsx',
-    'Fish': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00504/qsar_fish_toxicity.csv',
-    'Kin8nm': None,
-    'MPG': 'https://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data',
-    'Naval': 'http://archive.ics.uci.edu/ml/machine-learning-databases/00316/UCI%20CBM%20Dataset.zip',
-    'Power': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00294/CCPP.zip',
-    'Protein': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00265/CASP.csv',
-    'Wine_Red': 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv',
-    'Wine_White': 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv',
-    'Yacht': 'http://archive.ics.uci.edu/ml/machine-learning-databases/00243/yacht_hydrodynamics.data',
-    'Year': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00203/YearPredictionMSD.txt.zip',
+    # 'Concrete': 'http://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls',
+    # 'CPU': 'https://archive.ics.uci.edu/ml/machine-learning-databases/cpu-performance/machine.data',
+    # 'Crime': 'https://archive.ics.uci.edu/ml/machine-learning-databases/communities/communities.data',
+    # 'Energy': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00242/ENB2012_data.xlsx',
+    # 'Fish': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00504/qsar_fish_toxicity.csv',
+    # 'Kin8nm': None,
+    # 'MPG': 'https://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data',
+    # 'Naval': 'http://archive.ics.uci.edu/ml/machine-learning-databases/00316/UCI%20CBM%20Dataset.zip',
+    # 'Power': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00294/CCPP.zip',
+    # 'Protein': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00265/CASP.csv',
+    # 'Wine_Red': 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv',
+    # 'Wine_White': 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv',
+    # 'Yacht': 'http://archive.ics.uci.edu/ml/machine-learning-databases/00243/yacht_hydrodynamics.data',
+    # 'Year': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00203/YearPredictionMSD.txt.zip',
 }
 
 

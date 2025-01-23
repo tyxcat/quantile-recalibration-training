@@ -8,6 +8,12 @@ from dask.distributed import Client
 # warnings.filterwarnings("ignore", ".*does not have many workers.*")
 # warnings.filterwarnings("ignore", ".*Detected KeyboardInterrupt, attempting graceful shutdown....*")
 
+# python run.py name="per_epoch" nb_workers=1 repeat_tuning=1 \
+#         log_base_dir="logs" progress_bar=False \
+#         save_train_metrics=True save_val_metrics=True remove_checkpoints=False \
+#         selected_dataset_groups=["uci"] \
+#         tuning_type="QRT_per_epoch"
+
 def main():
     import sys
 

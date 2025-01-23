@@ -4,6 +4,7 @@ from uq.models.regul.marginal_regul import sample_spacing_entropy_estimation
 from uq.utils.dist import icdf
 
 from .calibration import (
+    ece,
     ece_on_worst_subgroups,
     get_observed_frequency,
     quantile_calibration_from_pits_with_sorting,
@@ -32,9 +33,12 @@ class DistMetricsComputer(MetricsComputer):
     def cheap_metrics(self):
         nll_value = nll(self.dist, self.y).mean()
         pits = self.dist.cdf(self.y)
+        # print('/////////////', pits.shape)
         calib_l1 = quantile_calibration_from_pits_with_sorting(pits, L=1)
         calib_l2 = quantile_calibration_from_pits_with_sorting(pits, L=2)
         calib_kl = -sample_spacing_entropy_estimation(pits, neural_sort=False)
+        ece_up = ece(pits)
+        # print('ECE (unsorted PIT): ', ece_up, '  calib_l1: ', calib_l1)
 
         alpha = torch.arange(0.05, 1, 0.05)
         observed_frequency = get_observed_frequency(pits, alpha)
@@ -47,11 +51,13 @@ class DistMetricsComputer(MetricsComputer):
             'calib_l1': calib_l1,
             'calib_l2': calib_l2,
             'calib_kl': calib_kl,
+            'ece_up': ece_up,
             **observed_frequency_metrics,
         }
 
     def costly_metrics(self):
-        alpha = torch.arange(0.05, 1, 0.05)
+        # alpha = torch.arange(0.05, 1, 0.05)
+        alpha = torch.arange(0.025, 1, 0.025)
         nan = torch.tensor(torch.nan)
         nan_vector = torch.full_like(self.y, torch.nan)
 
@@ -60,7 +66,7 @@ class DistMetricsComputer(MetricsComputer):
         pearson = nan
         wis_value = nan_vector
         quantiles_scores = {f'quantile_score_{level:.2f}': nan for level in alpha}
-        length_90, coverage_90 = nan_vector, nan_vector
+        length_95, coverage_95 = nan_vector, nan_vector
         median = nan_vector
         mean = nan_vector
         stddev = nan_vector
@@ -84,12 +90,9 @@ class DistMetricsComputer(MetricsComputer):
                 f'quantile_score_{level:.2f}': score for level, score in zip(alpha, quantile_scores_per_level)
             }
             length_90, coverage_90 = length_and_coverage_from_quantiles(self.y, quantiles, alpha, 0.05, 0.95)
-            median_index = (alpha == 0.5).nonzero().item()
-            median = quantiles[..., median_index]
-
-        try:
-            crps = self.dist.crps(self.y)
-        except (NotImplementedError, AttributeError):
+            length_95, coverage_95 = length_and_coverage_from_quantiles(self.y, quantiles, alpha, 0.025, 0.975)
+            # print('Sharpness: ', length_95.mean() / (self.y.max()-self.y.min()))
+            ece_abs = ece(alpha)
             crps = nan_vector
         try:
             mean = self.dist.mean
@@ -114,6 +117,9 @@ class DistMetricsComputer(MetricsComputer):
             'pearson': pearson,
             'length_90': length_90.mean(),
             'coverage_90': coverage_90.mean(),
+            'length_95': length_95.mean(),
+            'coverage_95': coverage_95.mean(),
+            'sharpness': length_95.mean() / (self.y.max() - self.y.min()),
             'rmse': (mean - self.y).square().mean().sqrt(),
             'mae': (median - self.y).abs().mean(),
             **quantiles_scores,
