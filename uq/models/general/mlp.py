@@ -14,7 +14,7 @@ class MLP(nn.Module):
     def __init__(
         self,
         input_size=1,
-        hidden_sizes=[128],
+        hidden_sizes=[100],
         output_sizes=[1],
         drop_prob=0.2,
         persistent_input_size=0,
@@ -25,38 +25,61 @@ class MLP(nn.Module):
         super().__init__()
         self.input_size = input_size
         self.output_sizes = output_sizes
-        self.persistent_input_size = persistent_input_size
-        self.skip_connection = skip_connection
+        # self.persistent_input_size = persistent_input_size
+        # self.skip_connection = skip_connection
 
+        # self.hidden_layers = nn.ModuleList()
+        # current_input_size = input_size + persistent_input_size
+        # for hidden_size in hidden_sizes:
+        #     self.hidden_layers.append(linear_layer(current_input_size, hidden_size))
+        #     current_input_size = hidden_size + persistent_input_size
+
+        # self.dropout_layer = nn.Dropout(p=drop_prob)
+        # self.output_layer = linear_layer(current_input_size, sum(output_sizes))
+
+        # input layer
+        self.input_layer = nn.Sequential(
+            nn.Linear(input_size, hidden_sizes[0]),
+            nn.PReLU())
+        # hidden layers
         self.hidden_layers = nn.ModuleList()
-        current_input_size = input_size + persistent_input_size
         for hidden_size in hidden_sizes:
-            self.hidden_layers.append(linear_layer(current_input_size, hidden_size))
-            current_input_size = hidden_size + persistent_input_size
-
-        self.dropout_layer = nn.Dropout(p=drop_prob)
-        self.output_layer = linear_layer(current_input_size, sum(output_sizes))
+            self.hidden_layers.append(nn.Sequential(
+            nn.Linear(hidden_size, hidden_size),
+            nn.PReLU()))
+        # output layer
+        self.output_layer = nn.Sequential(
+            nn.Linear(hidden_sizes[-1], sum(output_sizes)),
+            nn.PReLU())
 
     def forward(self, x0, r=None):
-        x = x0
-        if self.persistent_input_size > 0:
-            if r is None:
-                r = torch.rand((x.shape[0], self.persistent_input_size), device=x.device)
-            elif r.dim() == 1:
-                r = r.unsqueeze(0).repeat(x.shape[0], 1)
+        input = x0
+        output = self.input_layer(input)
         for layer in self.hidden_layers:
-            if self.persistent_input_size > 0:
-                x = torch.cat([x, r], dim=1)
-            x = layer(x)
-            x = F.relu(x)
-        x = self.dropout_layer(x)
-        if self.persistent_input_size > 0:
-            x = torch.cat([x, r], dim=1)
-        x = self.output_layer(x)
-        if self.skip_connection:
-            x = x / 10 + x0
-        x = torch.split(x, self.output_sizes, dim=-1)
-        return x
+            output_hidden = layer(output) + output
+            output = output_hidden
+        output = self.output_layer(output)
+        output = torch.split(output, self.output_sizes, dim=-1)
+        return output
+        # x = x0
+        # if self.persistent_input_size > 0:
+        #     if r is None:
+        #         r = torch.rand((x.shape[0], self.persistent_input_size), device=x.device)
+        #     elif r.dim() == 1:
+        #         r = r.unsqueeze(0).repeat(x.shape[0], 1)
+        # for layer in self.hidden_layers:
+        #     if self.persistent_input_size > 0:
+        #         x = torch.cat([x, r], dim=1)
+        #     x = layer(x)
+        #     x = F.relu(x)
+        # x = self.dropout_layer(x)
+        # if self.persistent_input_size > 0:
+        #     x = torch.cat([x, r], dim=1)
+        # x = self.output_layer(x)
+        # if self.skip_connection:
+        #     x = x / 10 + x0
+        # x = torch.split(x, self.output_sizes, dim=-1)
+        # return x
 
 
 def get_body_module(body):
