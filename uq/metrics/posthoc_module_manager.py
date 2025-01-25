@@ -8,11 +8,12 @@ from .metrics_collector import MetricsCollector
 
 
 class PosthocModule:
-    def __init__(self, base_module, posthoc_dataset, hparams):
+    def __init__(self, base_module, posthoc_dataset, hparams, device='cpu'):
         self.base_module = base_module
         self.hparams = hparams
         self.collector = MetricsCollector(base_module)
         self.model = get_posthoc_transformer(base_module, base_module.module, posthoc_dataset, hparams)
+        self.device = device
 
     def build(self, epoch, batch_idx, stage, batch=None):
         self.model.build(epoch, batch_idx, stage, batch=batch)
@@ -27,9 +28,10 @@ class PosthocModule:
 
 
 class PostHocModuleManager:
-    def __init__(self, base_module, posthoc_dataset, posthoc_grid):
+    def __init__(self, base_module, posthoc_dataset, posthoc_grid, device='cuda'):
         self.base_module = base_module
-        self.modules = [PosthocModule(base_module, posthoc_dataset, hparams) for hparams in posthoc_grid]
+        self.modules = [PosthocModule(base_module, posthoc_dataset, hparams, device=device) for hparams in posthoc_grid]
+        self.device = device
 
     def get_module(self, hparams):
         for module in self.modules:

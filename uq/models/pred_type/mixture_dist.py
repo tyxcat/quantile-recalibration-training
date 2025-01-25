@@ -10,10 +10,11 @@ from uq.utils.general import elapsed_timer
 
 # Mixture distribution for a location-scale family
 class MixtureDist(MixtureSameFamily):
-    def __init__(self, component_dist_class, means, stds, *, probs=None, logits=None):
+    def __init__(self, component_dist_class, means, stds, *, probs=None, logits=None, device=None):
         mix_dist = Categorical(probs=probs, logits=logits)
         self.component_dist_class = component_dist_class
         component_dist = self.component_dist_class(means, stds)
+        self.device = device
         super().__init__(mix_dist, component_dist)
 
     def icdf(self, value):

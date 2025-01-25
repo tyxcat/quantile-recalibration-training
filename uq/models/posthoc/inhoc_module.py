@@ -21,7 +21,7 @@ class InHocModule(DecoratorModule):
         return self.inhoc_model(self.module.predict(x))
 
     def step(self, x, y, batch_idx, stage):
-        log.debug(f'epoch: {self.base_module.current_epoch}, idx: {batch_idx}')
+        # log.debug(f'epoch: {self.base_module.current_epoch}, idx: {batch_idx}')
         # Compute inhoc model
         with elapsed_timer() as time:
             # We can't assign to current_epoch directly so we had to use this workaround.

@@ -10,17 +10,17 @@ from ..pred_type.recalibrated_dist import RecalibratedDist
 from .recalibration import build_recalibration_map
 
 
-def get_posthoc_transformer(base_module, module, dataset, hparams, variant=None):
+def get_posthoc_transformer(base_module, module, dataset, hparams, variant=None, device='cpu'):
     method = hparams['method']
     if method is None:
-        return IdentityTransformer(base_module, module, dataset, hparams, variant)
+        return IdentityTransformer(base_module, module, dataset, hparams, variant, device=device)
     elif method in ['ecdf', 'stochastic_ecdf', 'linear_ecdf', 'smooth_ecdf']:
-        return RecalibratedDistTransformer(base_module, module, dataset, hparams, variant)
+        return RecalibratedDistTransformer(base_module, module, dataset, hparams, variant, device=device)
     raise ValueError('Invalid posthoc method:', method)
 
 
 class PosthocTransformer:
-    def __init__(self, base_module, module, dataset, hparams, variant=None):
+    def __init__(self, base_module, module, dataset, hparams, variant=None, device='cpu'):
         from ..base_module import BaseModule
         from ..decorator_module import ComponentModule
 
@@ -37,6 +37,7 @@ class PosthocTransformer:
         self.cal_size = self.hparams.pop('cal_size', 2048)
         self.variant = variant
         self.epoch, self.batch_idx = None, None
+        self.device = device
 
         self.init_dataiters()
     

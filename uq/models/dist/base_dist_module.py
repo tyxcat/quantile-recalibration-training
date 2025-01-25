@@ -7,7 +7,7 @@ from uq.utils.dist import unnormalize_y
 from uq.utils.general import elapsed_timer
 
 class DistModule(BaseModule):
-    def compute_metrics(self, dist, y, posthoc_module, batch_idx, monitor_value=None, stage=None, batch=None):
+    def compute_metrics(self, dist, y, posthoc_module, batch_idx, monitor_value=None, stage=None, batch=None, device='cuda'):
         # We avoid to make costly predictions if we do not compute metrics
         computer = DistMetricsComputer(self)
         if not computer.should_compute(stage):

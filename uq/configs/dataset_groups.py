@@ -18,20 +18,23 @@ def default_args(config):
 
 
 def uci_config(config):
-    names = [
+    candidates = [
         'Boston',
-        # 'Yacht',
-        # 'MPG',
-        # 'Energy',
-        # 'Crime',
-        # 'Fish',
-        # 'Concrete',
-        # 'Airfoil',
-        # 'Kin8nm',
-        # 'Power',
-        # 'Naval',
-        # 'Protein',
+        'Yacht',
+        'MPG',
+        'Energy',
+        'Crime',
+        'Fish',
+        'Concrete',
+        'Airfoil',
+        'Kin8nm',
+        'Power',
+        'Naval',
+        'Protein',
+        "Wine",
     ]
+    names = [name for name in candidates if name.lower() in config.name]
+    print(names)
     datamodule_config = dict(
         cls=UCIDataModule,
         args=default_args(config),

@@ -15,14 +15,15 @@ from .independence import (
     indep_of_length_and_coverage_pearson,
 )
 from .metrics_computer import MetricsComputer
-from .quantiles import length_and_coverage_from_quantiles, quantile_scores, wis
+from .quantiles import length_and_coverage_from_quantiles, quantile_scores, wis, interval_score, check_score, variance
 
 
 class DistMetricsComputer(MetricsComputer):
-    def __init__(self, module, y=None, dist=None, **kwargs):
+    def __init__(self, module, y=None, dist=None, device='cuda', **kwargs):
         super().__init__(module, **kwargs)
-        self.y = y
+        self.y = y.to(device) if y is not None else None
         self.dist = dist
+        self.device = device
 
     def monitored_metrics(self):
         nll_value = nll(self.dist, self.y).mean()
@@ -40,7 +41,7 @@ class DistMetricsComputer(MetricsComputer):
         ece_up = ece(pits)
         # print('ECE (unsorted PIT): ', ece_up, '  calib_l1: ', calib_l1)
 
-        alpha = torch.arange(0.05, 1, 0.05)
+        alpha = torch.arange(0.05, 1, 0.05, device=self.device)
         observed_frequency = get_observed_frequency(pits, alpha)
         observed_frequency_metrics = {
             f'observed_frequency_{level:.2f}': value for level, value in zip(alpha, observed_frequency)
@@ -57,9 +58,10 @@ class DistMetricsComputer(MetricsComputer):
 
     def costly_metrics(self):
         # alpha = torch.arange(0.05, 1, 0.05)
-        alpha = torch.arange(0.025, 1, 0.025)
-        nan = torch.tensor(torch.nan)
-        nan_vector = torch.full_like(self.y, torch.nan)
+        alpha = torch.arange(0.005, 1, 0.005, device=self.device)
+        nan = torch.tensor(torch.nan, device=self.device)
+        nan_vector = torch.full_like(self.y, torch.nan, device=self.device)
+        
 
         quantile_scores_values = nan_vector
         quantile_scores_per_level = nan_vector
@@ -83,6 +85,9 @@ class DistMetricsComputer(MetricsComputer):
             assert quantiles.shape == self.dist.batch_shape + alpha.shape
             quantile_scores_values = quantile_scores(self.y, quantiles, alpha)
             quantile_scores_per_level = quantile_scores_values.mean(dim=0)
+            interval_score_value = interval_score(self.y, quantiles, alpha)
+            check_score_value = check_score(self.y, quantiles, alpha)
+            variance_values = variance(self.y, quantiles, alpha)
             # We just take the mean for all coverage levels (same weight for each coverage level)
             pearson = indep_of_length_and_coverage_pearson(self.y, quantiles).mean()
             wis_value = wis(quantile_scores_values)
@@ -107,6 +112,9 @@ class DistMetricsComputer(MetricsComputer):
 
         return {
             'quantile_score': quantile_scores_per_level.mean(),
+            'interval_score': interval_score_value,
+            'check_score': check_score_value,
+            'variance': variance_values.mean(),
             'wis': wis_value.mean(),
             'crps': crps.mean() if compute_quantile_metrics else nan,
             'mean': mean.mean(),

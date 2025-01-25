@@ -12,8 +12,8 @@ from uq.models.regul.marginal_regul import sample_spacing_entropy_estimation
 
 
 class UnitUniform(Uniform):
-    def __init__(self, batch_shape, *args, **kwargs):
-        super().__init__(torch.zeros(batch_shape), torch.ones(batch_shape), *args, **kwargs)
+    def __init__(self, batch_shape, device, *args, **kwargs):
+        super().__init__(torch.zeros(batch_shape, device=device), torch.ones(batch_shape, device=device), *args, **kwargs)
 
     def log_prob(self, value):
         value = adjust_unit_tensor(value)
@@ -33,7 +33,7 @@ class RecalibratedDist(TransformedDistribution):
         self.neural_sort = neural_sort
         self.s = s
 
-        base_dist = UnitUniform(dist.batch_shape)
+        base_dist = UnitUniform(dist.batch_shape, dist.device)
         transforms = [
             self.posthoc_model.inv,
             CumulativeDistributionTransform(dist).inv,

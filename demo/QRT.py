@@ -29,7 +29,7 @@ class SmoothEmpiricalCDF(CumulativeDistributionTransform):
             Categorical(probs=torch.ones_like(x)), 
             Logistic(x, torch.tensor(b * N ** (-1 / 5)))
         )
-        dist = ReflectedDist(dist, torch.tensor(0.0), torch.tensor(1.0))
+        dist = ReflectedDist(dist, torch.tensor(0.0).cuda(), torch.tensor(1.0).cuda())
         super().__init__(dist, **kwargs)
 
 

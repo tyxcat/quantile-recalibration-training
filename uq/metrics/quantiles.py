@@ -20,14 +20,57 @@ def quantile_scores(y, quantiles, alpha):
     return score_per_quantile
 
 
-def interval_scores(quantile_scores, alpha):
+def interval_score(y, quantiles, alpha):
     """
     It is supposed that quantile_scores[i] and quantile_scores[-i] have corresponding levels alpha/2 and 1-alpha/2
     """
-    mid = len(alpha) / 2
-    assert alpha[:mid] == 1 - alpha[mid + 1 :: -1]
-    coverage = 1 - 2 * alpha[:mid]
-    return 2 * (quantile_scores[:, :mid] + quantile_scores[:, mid + 1 :: -1]) / coverage
+
+    batch_size, n_levels = quantiles.shape
+    if alpha.dim() == 1:   # If alpha is the same for each elements of the batch
+        alpha = alpha[None, :]   # We add the batch dimension
+    assert alpha.shape[-1] == n_levels and y.shape == (batch_size,)
+    mid = int(alpha.shape[-1] / 2)
+    
+    interval_score = torch.zeros(batch_size, device=y.device)
+    for i in range(mid):
+        p = (0.5 - alpha[: , i]) * 2
+        pred_l, pred_u = quantiles[:, i], quantiles[:, -i-1]
+    
+        below_l = ((pred_l - y) > 0).float()
+        above_u = ((y - pred_u) > 0).float()
+        score_per_p = (
+            (pred_u - pred_l)
+            + (2.0 / (1 - p)) * (pred_l - y) * below_l
+            + (2.0 / (1 - p)) * (y - pred_u) * above_u
+        )
+        interval_score = score_per_p + interval_score
+    
+    return interval_score.mean() / mid
+
+def variance(y, quantiles, alpha):
+
+    batch_size, n_levels = quantiles.shape
+    assert alpha.shape[-1] == n_levels and y.shape == (batch_size,)
+    dp = alpha[1:] - alpha[:-1]
+    x = 0.5 * (quantiles.T[1: ] + quantiles.T[:-1])
+    expected_values = torch.sum(x.T * dp, 1)
+    variance_values = torch.sum(((x - expected_values) ** 2).T * dp, 1)
+    return variance_values
+
+
+def check_score(y, quantiles, alpha):
+    """
+    Return the check score for a list of quantile levels.
+    """
+    batch_size, n_levels = quantiles.shape
+    if alpha.dim() == 1:   # If alpha is the same for each elements of the batch
+        alpha = alpha[None, :]   # We add the batch dimension
+    assert alpha.shape[-1] == n_levels and y.shape == (batch_size,)
+    diff = quantiles - y[:, None] 
+    mask = (diff >= 0).float() - alpha
+    check_score_per_quantile = torch.mean(diff * mask, dim=0)
+    return check_score_per_quantile.mean()
+    
 
 
 def wis(quantile_scores):
@@ -73,7 +116,7 @@ def crps_normal_mixture(dist, y):
 
 
 def length_and_coverage_from_quantiles(y, quantiles, alpha, left_alpha, right_alpha):
-    left_alpha_index = (alpha == left_alpha).nonzero().item()
+    left_alpha_index = (torch.isclose(alpha, torch.tensor(left_alpha))).nonzero().item()
     right_alpha_index = (torch.isclose(alpha, torch.tensor(right_alpha))).nonzero().item()
     left_bound = quantiles[..., left_alpha_index]
     right_bound = quantiles[..., right_alpha_index]

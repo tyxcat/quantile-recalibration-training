@@ -91,10 +91,10 @@ class BaseModule(LightningModule):
         pass
 
     def timed_step(self, batch, batch_idx, stage):
-        #print(f'Start step {stage}: {default_timer() - self.start_times[stage]:.3f}s', )
+        # print(f'Start step {stage}: {default_timer() - self.start_times[stage]:.3f}s', )
         self.stage = stage
         result = self.step(batch, batch_idx, stage)
-        #print(f'End step {stage}: {default_timer() - self.start_times[stage]:.3f}s', )
+        # print(f'End step {stage}: {default_timer() - self.start_times[stage]:.3f}s', )
         return result
 
     def predict_step(self, batch, batch_idx):

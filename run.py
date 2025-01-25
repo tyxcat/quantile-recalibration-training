@@ -22,24 +22,32 @@ def main():
     from uq.runner import run_all
 
     config = OmegaConf.from_cli(sys.argv)
-    config = get_config(config)
-    config.clean_previous = True
-    OmegaConf.resolve(config)
-    Path(config.log_dir).mkdir(parents=True, exist_ok=True)
 
-    print(config.log_dir)
+    for dataset in ['boston', 'yacht', 'wine', 'concrete', 'energy', 'naval']:
+        for seed_id in range(1, 6):
+            config = OmegaConf.from_cli(sys.argv)
+            print(seed_id)
+            config.seed = seed_id
+            config.name = f'{dataset}_{seed_id}'
+            config = get_config(config)
+            config.device = 'cuda'
+            # config.clean_previous = True
+            OmegaConf.resolve(config)
+            Path(config.log_dir).mkdir(parents=True, exist_ok=True)
+            print(config.log_dir)
 
-    # Pretty print config using Rich library
-    if config.get("print_config"):
-        utils.print_config(config, resolve=True)
-    # Set parallelization
-    manager = 'joblib'
-    if config.nb_workers == 1:
-        manager = 'sequential'
-    if manager == 'dask':
-        Client(n_workers=config.nb_workers, threads_per_worker=1, memory_limit=None)
-    # Train model
-    return run_all(config, manager=manager)
+            # Pretty print config using Rich library
+            # if config.get("print_config"):
+            #     utils.print_config(config, resolve=True)
+            # Set parallelization
+            manager = 'joblib'
+            if config.nb_workers == 1:
+                manager = 'sequential'
+            if manager == 'dask':
+                Client(n_workers=config.nb_workers, threads_per_worker=1, memory_limit=None)
+            # Train model
+            run_all(config, manager=manager)
+    return
 
 
 if __name__ == "__main__":

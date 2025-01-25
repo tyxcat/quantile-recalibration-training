@@ -28,7 +28,7 @@ def quantile_calibration_from_quantiles(quantiles, y, L, alpha):
 
 def ece(pit):
     # Similar to quantile_calibration_from_pits_with_sorting(pit, L=1) without sorting
-    lin = centered_bins(pit.shape[0])
+    lin = centered_bins(pit.shape[0]).to(pit.device)
     return (pit - lin).abs().mean()
 
 

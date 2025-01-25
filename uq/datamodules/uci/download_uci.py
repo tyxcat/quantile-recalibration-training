@@ -17,19 +17,19 @@ from ..preprocessing import (
 urls = {
     # 'Airfoil': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00291/airfoil_self_noise.dat',
     'Boston': 'https://archive.ics.uci.edu/ml/machine-learning-databases/housing/housing.data',
-    # 'Concrete': 'http://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls',
+    'Concrete': 'http://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/Concrete_Data.xls',
     # 'CPU': 'https://archive.ics.uci.edu/ml/machine-learning-databases/cpu-performance/machine.data',
     # 'Crime': 'https://archive.ics.uci.edu/ml/machine-learning-databases/communities/communities.data',
-    # 'Energy': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00242/ENB2012_data.xlsx',
+    'Energy': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00242/ENB2012_data.xlsx',
     # 'Fish': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00504/qsar_fish_toxicity.csv',
     # 'Kin8nm': None,
-    # 'MPG': 'https://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data',
-    # 'Naval': 'http://archive.ics.uci.edu/ml/machine-learning-databases/00316/UCI%20CBM%20Dataset.zip',
-    # 'Power': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00294/CCPP.zip',
-    # 'Protein': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00265/CASP.csv',
-    # 'Wine_Red': 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv',
+    'MPG': 'https://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data',
+    'Naval': 'http://archive.ics.uci.edu/ml/machine-learning-databases/00316/UCI%20CBM%20Dataset.zip',
+    'Power': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00294/CCPP.zip',
+    'Protein': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00265/CASP.csv',
+    'Wine': 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-red.csv',
     # 'Wine_White': 'https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv',
-    # 'Yacht': 'http://archive.ics.uci.edu/ml/machine-learning-databases/00243/yacht_hydrodynamics.data',
+    'Yacht': 'http://archive.ics.uci.edu/ml/machine-learning-databases/00243/yacht_hydrodynamics.data',
     # 'Year': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00203/YearPredictionMSD.txt.zip',
 }
 
@@ -76,7 +76,7 @@ def download_uci_df(name, url):
     elif name == 'Protein':
         df = pd.read_csv(url, header='infer', delimiter=',')
         return put_last(df, 0)
-    elif name == 'Wine_Red':
+    elif name == 'Wine':
         return pd.read_csv(url, header='infer', delimiter=';')
     elif name == 'Wine_White':
         return pd.read_csv(url, header='infer', delimiter=';')
@@ -110,6 +110,7 @@ def download_uci(name, url, data_path):
     except FileNotFoundError:
         pass
 
+    print('Downloading', name)
     df = download_uci_df(name, url)
     x = df.iloc[:, :-1]
     y = df.iloc[:, -1:]

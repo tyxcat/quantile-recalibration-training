@@ -72,15 +72,15 @@ def kde_mc_entropy_estimation(kde_pit, mc_pit, b, base_module=None):
     return -cdf.log_abs_det_jacobian(mc_pit, None).mean()
 
 
-def quantile_based_regul(pit, L, neural_sort=False, s=0.1):
+def quantile_based_regul(pit, L, neural_sort=False, s=0.1, device='cuda'):
     if neural_sort:
         # soft_sort requires a 2D arrays and sorts along the second axis
-        sorted_pit = soft_sort(pit[None, :], regularization_strength=s)[0]
+        sorted_pit = soft_sort(pit[None, :], regularization_strength=s)[0].to(device)
     else:
-        sorted_pit = torch.sort(pit, dim=-1)[0]
+        sorted_pit = (torch.sort(pit, dim=-1)[0]).to(device)
     n = pit.shape[-1]
     # lin = (torch.arange(n) + 1) / n
-    lin = (torch.arange(n) + 1) / (n + 1)
+    lin = (torch.arange(n, device=device) + 1) / (n + 1)
     loss = (sorted_pit - lin).abs().pow(L).mean(dim=-1)
     return loss
 

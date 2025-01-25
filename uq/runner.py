@@ -229,6 +229,8 @@ def run_all(config: DictConfig, manager='sequential'):
                 dataset_group=dataset_group,
                 dataset=dataset,
             )
+            rc.seed = config.seed
+            rc.device = config.device
             runner.run_tuning(rc, priority)
             priority -= 1
     runner.close()

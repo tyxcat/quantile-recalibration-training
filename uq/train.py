@@ -139,18 +139,20 @@ def train(rc, process_index):
     datamodule.load_datasets()   # Needed for inhoc_variant=="learned"
 
     # Init lightning model with the same seed for the same run index.
-    if rc.tuning:
-        seed = 1000 + rc.run_id
-    else:
-        seed = rc.run_id
-    rc.seed = seed
+    # if rc.tuning:
+    #     seed = 1000 + rc.run_id
+    # else:
+    #     seed = rc.run_id
+    # rc.seed = seed
+    # rc.seed = 1
+    
     seed_everything(rc.seed)
     hps = get_model_hparams(rc, datamodule)
-    model = rc.model_cls(rc=rc, hps=hps, datamodule=datamodule)
+    model = rc.model_cls(rc=rc, hps=hps, datamodule=datamodule,device=rc.device)
     trainer = init_trainer_with_loggers_and_callbacks(rc, model, process_position=process_index)
 
     # Training loop
-    model.best_epoch_to_use = None
+    model.best_epoch_to_use = None    
     trainer.fit(model=model, datamodule=datamodule)
     #fit_with_profiling(rc, trainer, model, datamodule)
 

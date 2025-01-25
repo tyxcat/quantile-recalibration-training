@@ -90,12 +90,13 @@ def get_body_module(body):
 
 
 class MixturePrediction(nn.Module):
-    def __init__(self, event_size=1, mixture_size=1, add_std_output=True, homoscedastic=False, base_model='nn', **kwargs):
+    def __init__(self, event_size=1, mixture_size=1, add_std_output=True, homoscedastic=False, base_model='nn', device='cpu', **kwargs):
         super().__init__()
         self.event_size = event_size
         self.mixture_size = mixture_size
         self.add_std_output = add_std_output
         self.homoscedastic = homoscedastic
+        self.device = device
 
         output_sizes = [event_size * mixture_size]
         if self.add_std_output:
@@ -108,6 +109,10 @@ class MixturePrediction(nn.Module):
         self.body = body_module(output_sizes=output_sizes, **kwargs)
 
     def forward(self, x, r=None):
+        x = x.to(self.device)
+        if r:
+            r = r.to(self.device)
+        # print(x.device, r.device if r else None)
         if self.add_std_output:
             if self.homoscedastic:
                 means, mix_logits = self.body(x, r=r)
@@ -123,7 +128,7 @@ class MixturePrediction(nn.Module):
     def dist(self, x, r=None):
         assert self.add_std_output
         means, stds, mix_logits = self.forward(x, r=r)
-        return NormalMixtureDist(means, stds, logits=mix_logits)
+        return NormalMixtureDist(means, stds, logits=mix_logits, device=self.device)
 
 
 class SplinePrediction(nn.Module):

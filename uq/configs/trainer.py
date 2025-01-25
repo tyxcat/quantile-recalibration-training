@@ -36,7 +36,7 @@ def lightning_trainer_config(config):
     default_config = dict(
         cls=Trainer,
         args=dict(
-            accelerator='cpu',
+            accelerator='gpu',
             devices=1,
             min_epochs=1,
             max_epochs=500,

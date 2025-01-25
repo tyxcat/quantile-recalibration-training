@@ -17,6 +17,7 @@ class RunConfig:
     hparams: dict = None
     metrics: dict = None
     model_cls: str = None
+    device: str = 'cpu'
 
     def __post_init__(self):
         pass

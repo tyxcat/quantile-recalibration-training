@@ -13,7 +13,7 @@ log = logging.getLogger('uq')
 
 # Source: https://gist.github.com/farahmand-m/8a416f33a27d73a149f92ce4708beb40
 class StandardScaler:
-    def __init__(self, mean=None, scale=None, epsilon=1e-7):
+    def __init__(self, mean=None, scale=None, epsilon=1e-7, device='cuda'):
         """Standard Scaler.
         The class can be used to normalize PyTorch Tensors using native functions. The module does not expect the
         tensors to be of any specific shape; as long as the features are the last dimension in the tensor, the module
@@ -22,17 +22,20 @@ class StandardScaler:
         self.mean_ = mean
         self.scale_ = scale
         self.epsilon = epsilon
+        self.device = device
 
     def fit(self, values):
         dims = list(range(values.dim() - 1))
-        self.mean_ = torch.mean(values, dim=dims)
-        self.scale_ = torch.std(values, dim=dims)
+        self.mean_ = torch.mean(values, dim=dims).to(self.device)
+        self.scale_ = torch.std(values, dim=dims).to(self.device)
         return self
 
     def transform(self, values):
+        values = values.to(self.device)
         return (values - self.mean_) / (self.scale_ + self.epsilon)
 
     def inverse_transform(self, values):
+        values = values.to(self.device)
         return values * self.scale_ + self.mean_
 
 

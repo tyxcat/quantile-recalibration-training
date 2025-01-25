@@ -32,15 +32,17 @@ class SmoothEmpiricalCDF(CumulativeDistributionTransform):
         epoch=None,
         batch_idx=None,
         base_module=None,
+        device='cuda',
         **kwargs,
     ):
         self.epoch = epoch
         self.batch_idx = batch_idx
+        self.device = device
         assert x.dim() == 1
         N = x.shape[0]
-        dist = LogisticMixtureDist(x, torch.tensor(b * N ** (-1 / 5)), probs=torch.ones_like(x), base_module=base_module)
+        dist = LogisticMixtureDist(x, torch.tensor(b * N ** (-1 / 5), device=device), probs=torch.ones_like(x).to(device), base_module=base_module)
         if reflected:
-            dist = ReflectedDist(dist, torch.tensor(0.0), torch.tensor(1.0))
+            dist = ReflectedDist(dist, torch.tensor(0.0, device=device), torch.tensor(1.0, device=device))
         if truncated:
             dist = TruncatedDist(dist, torch.tensor(0.0), torch.tensor(1.0))
         super().__init__(dist, **kwargs)

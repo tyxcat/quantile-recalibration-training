@@ -8,9 +8,10 @@ from ..general.mlp import MixturePrediction, SplinePrediction
 
 
 class NeuralNetworkModule(ComponentModule):
-    def __init__(self, base_module, *args, **kwargs):
+    def __init__(self, base_module, device='cuda', *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._base_module = [base_module]
+        self.device = device
 
     def predict(self, x):
         with elapsed_timer() as time:
@@ -58,7 +59,7 @@ class MixtureModule(NeuralNetworkModule):
     def build_model(self):
         homoscedastic = self.misspecification == 'homoscedasticity'
         return MixturePrediction(
-            mixture_size=self.mixture_size, homoscedastic=homoscedastic, **self.get_mlp_args()
+            mixture_size=self.mixture_size, homoscedastic=homoscedastic, device=self.device, **self.get_mlp_args()
         )
 
     def capture_hparams(self, mixture_size=3, **kwargs):

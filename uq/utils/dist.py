@@ -25,17 +25,17 @@ def icdf_from_cdf(dist, alpha, epsilon=1e-5, warn_precision=4e-3, low=None, high
     """
 
     alpha = adjust_unit_tensor(alpha)
-    alpha, _ = torch.broadcast_tensors(alpha, torch.zeros(dist.batch_shape))
+    alpha, _ = torch.broadcast_tensors(alpha, torch.zeros(dist.batch_shape, device=alpha.device))
     # Expand to the left and right until we are sure that the quantile is in the interval
     expansion_factor = 4
     if low is None:
-        low = torch.full(alpha.shape, -1.0)
+        low = torch.full(alpha.shape, -1.0, device=alpha.device)
         while (mask := dist.cdf(low) > alpha + epsilon).any():
             low[mask] *= expansion_factor
     else:
         low = low.clone()
     if high is None:
-        high = torch.full(alpha.shape, 1.0)
+        high = torch.full(alpha.shape, 1.0, device=alpha.device)
         while (mask := dist.cdf(high) < alpha - epsilon).any():
             high[mask] *= expansion_factor
     else:
