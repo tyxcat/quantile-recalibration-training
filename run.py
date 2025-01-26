@@ -23,7 +23,7 @@ def main():
 
     config = OmegaConf.from_cli(sys.argv)
 
-    for dataset in ['boston', 'yacht', 'wine', 'concrete', 'energy', 'naval']:
+    for dataset in ['boston', 'yacht', 'wine', 'concrete', 'energy', 'naval', 'protein', 'mpg', 'power']:
         for seed_id in range(1, 6):
             config = OmegaConf.from_cli(sys.argv)
             print(seed_id)
