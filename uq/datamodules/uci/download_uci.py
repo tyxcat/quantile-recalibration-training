@@ -22,7 +22,7 @@ urls = {
     # 'Crime': 'https://archive.ics.uci.edu/ml/machine-learning-databases/communities/communities.data',
     'Energy': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00242/ENB2012_data.xlsx',
     # 'Fish': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00504/qsar_fish_toxicity.csv',
-    # 'Kin8nm': None,
+    'Kin8nm': None,
     'MPG': 'https://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data',
     'Naval': 'http://archive.ics.uci.edu/ml/machine-learning-databases/00316/UCI%20CBM%20Dataset.zip',
     'Power': 'https://archive.ics.uci.edu/ml/machine-learning-databases/00294/CCPP.zip',

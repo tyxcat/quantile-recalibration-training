@@ -34,7 +34,6 @@ def uci_config(config):
         "Wine",
     ]
     names = [name for name in candidates if name.lower() in config.name]
-    print(names)
     datamodule_config = dict(
         cls=UCIDataModule,
         args=default_args(config),
@@ -47,26 +46,26 @@ def uci_config(config):
 
 def openml297_config(config):
     names = [
-        'wine_quality',
-        'isolet',
-        'cpu_act',
-        'sulfur',
-        'Brazilian_houses',
-        'Ailerons',
-        'MiamiHousing2016',
-        'pol',
-        'elevators',
-        'Bike_Sharing_Demand',
-        'fifa',
-        #'houses', # Duplicate of california
-        'california',
-        'superconduct',
-        'house_sales',
-        'house_16H',
+        # 'wine_quality',
+        # 'isolet',
+        # 'cpu_act',
+        # 'sulfur',
+        # 'Brazilian_houses',
+        # 'Ailerons',
+        # 'MiamiHousing2016',
+        # 'pol',
+        # 'elevators',
+        # 'Bike_Sharing_Demand',
+        # 'fifa',
+        # #'houses', # Duplicate of california
+        # 'california',
+        # 'superconduct',
+        # 'house_sales',
+        # 'house_16H',
         'diamonds',
-        'medical_charges',
-        'year',
-        'nyc-taxi-green-dec-2016',
+        # 'medical_charges',
+        # 'year',
+        # 'nyc-taxi-green-dec-2016',
     ]
     datamodule_config = dict(
         cls=partial(OpenMLDataModule, suite_id=297),

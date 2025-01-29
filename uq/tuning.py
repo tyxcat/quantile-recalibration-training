@@ -4,7 +4,7 @@ from uq.utils.hparams import HP, Join, Union
 
 
 def get_tuning_for_QRT(config):
-    mlp = Join(HP(base_model='nn'), HP(nb_hidden=[5]), HP(batch_size=512))
+    mlp = Join(HP(base_model='nn'), HP(nb_hidden=[1]), HP(batch_size=512))
     resnet = Join(HP(base_model='resnet'), HP(batch_size=512))
 
     def default_tuning(
@@ -102,7 +102,7 @@ def get_tuning_for_QRT(config):
 
 
 def get_tuning_for_QRT_per_epoch(config):
-    mlp = Join(HP(base_model='nn'), HP(nb_hidden=[5]), HP(batch_size=512))
+    mlp = Join(HP(base_model='nn'), HP(nb_hidden=[1]), HP(batch_size=512))
     dist = Join(
         mlp,
         HP(pred_type='mixture'),

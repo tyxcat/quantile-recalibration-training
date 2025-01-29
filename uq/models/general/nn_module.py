@@ -37,7 +37,7 @@ class NeuralNetworkModule(ComponentModule):
         self.model = self.build_model()
 
     def capture_hparams(
-        self, input_size=None, units_size=100, nb_hidden=5, drop_prob=0.2, misspecification=None, base_model='nn', **kwargs
+        self, input_size=None, units_size=64, nb_hidden=1, drop_prob=0.2, misspecification=None, base_model='nn', **kwargs
     ):
         self.input_size = input_size
         assert input_size is not None

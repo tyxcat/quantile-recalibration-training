@@ -23,19 +23,18 @@ def main():
 
     config = OmegaConf.from_cli(sys.argv)
 
-    for dataset in ['boston', 'yacht', 'wine', 'concrete', 'energy', 'naval', 'protein', 'mpg', 'power']:
+    for dataset in ['diamonds']: # 'boston', 'yacht', 'wine', 'concrete', 'energy', 'naval', 'protein', 'mpg', 'power', 'kin8nm'
         for seed_id in range(1, 6):
             config = OmegaConf.from_cli(sys.argv)
             print(seed_id)
             config.seed = seed_id
-            config.name = f'{dataset}_{seed_id}'
+            config.name = f'{dataset}_{seed_id}_bpl'
             config = get_config(config)
             config.device = 'cuda'
             # config.clean_previous = True
             OmegaConf.resolve(config)
             Path(config.log_dir).mkdir(parents=True, exist_ok=True)
             print(config.log_dir)
-
             # Pretty print config using Rich library
             # if config.get("print_config"):
             #     utils.print_config(config, resolve=True)

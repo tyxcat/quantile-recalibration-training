@@ -14,7 +14,7 @@ class MLP(nn.Module):
     def __init__(
         self,
         input_size=1,
-        hidden_sizes=[100],
+        hidden_sizes=[64],
         output_sizes=[1],
         drop_prob=0.2,
         persistent_input_size=0,
@@ -40,17 +40,16 @@ class MLP(nn.Module):
         # input layer
         self.input_layer = nn.Sequential(
             nn.Linear(input_size, hidden_sizes[0]),
-            nn.PReLU())
+            nn.ReLU())
         # hidden layers
         self.hidden_layers = nn.ModuleList()
         for hidden_size in hidden_sizes:
             self.hidden_layers.append(nn.Sequential(
             nn.Linear(hidden_size, hidden_size),
-            nn.PReLU()))
+            nn.ReLU()))
         # output layer
         self.output_layer = nn.Sequential(
-            nn.Linear(hidden_sizes[-1], sum(output_sizes)),
-            nn.PReLU())
+            nn.Linear(hidden_sizes[-1], sum(output_sizes)))
 
     def forward(self, x0, r=None):
         input = x0
