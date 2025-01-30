@@ -62,7 +62,7 @@ def openml297_config(config):
         # 'superconduct',
         # 'house_sales',
         # 'house_16H',
-        'diamonds',
+        # 'diamonds',
         # 'medical_charges',
         # 'year',
         # 'nyc-taxi-green-dec-2016',

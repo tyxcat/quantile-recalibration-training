@@ -23,12 +23,12 @@ def main():
 
     config = OmegaConf.from_cli(sys.argv)
 
-    for dataset in ['diamonds']: # 'boston', 'yacht', 'wine', 'concrete', 'energy', 'naval', 'protein', 'mpg', 'power', 'kin8nm'
+    for dataset in ['kin8nm', 'boston', 'yacht', 'wine', 'concrete', 'energy', 'mpg', 'power', 'naval', 'protein']: # 'boston', 'yacht', 'wine', 'concrete', 'energy', 'naval', 'protein', 'mpg', 'power', 'kin8nm'
         for seed_id in range(1, 6):
             config = OmegaConf.from_cli(sys.argv)
             print(seed_id)
             config.seed = seed_id
-            config.name = f'{dataset}_{seed_id}_bpl'
+            config.name = f'{dataset}_{seed_id}'
             config = get_config(config)
             config.device = 'cuda'
             # config.clean_previous = True
